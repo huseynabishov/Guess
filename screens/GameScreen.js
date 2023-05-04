@@ -1,8 +1,11 @@
 import { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Alert } from "react-native";
 
 import NumberContainer from "../components/game/NumberContainer";
+import PrimaryButton from "../components/ui/PrimaryButton";
 import Title from "../components/ui/Title";
+
+
 
 
 function generateRandomBetween(min, max, exclude) {
@@ -16,9 +19,31 @@ function generateRandomBetween(min, max, exclude) {
   }
 
 
+let minBoundary = 1;
+let maxBoundary = 100;
+
 function GameScreen({userNumber}) {
-    const initialGuess = generateRandomBetween(1, 100, userNumber);
+    const initialGuess = generateRandomBetween(minBoundary, maxBoundary, userNumber);
     const[currentGuess, setCurrentGuess] = useState(initialGuess);
+
+    function nextGuessHandler(direction) {
+        if(
+         (direction === 'lower' && currentGuess < userNumber) ||
+         (direction === 'greater' && currentGuess > userNumber)
+         ) {
+            Alert.alert("Don't lie!", 'You know that this is wrong...', [{text: 'Sorry', style: 'cancel'}])
+            return;
+         }
+
+
+        if(direction === 'lower') {
+            maxBoundary = currentGuess;
+        } else {
+            minBoundary = currentGuess + 1;
+        }
+        const newRndumber = generateRandomBetween(minBoundary, maxBoundary, currentGuess);
+        setCurrentGuess(newRndumber);
+      }
     
     return (
         <View style={styles.screen}> 
@@ -26,7 +51,18 @@ function GameScreen({userNumber}) {
         <NumberContainer>{currentGuess}</NumberContainer>
             <View>
             <Text>Higher or Lower?</Text>
-            {/* { Something } */}
+            <View>
+
+            <View>
+            <PrimaryButton onPress={nextGuessHandler.bind(this, 'lower')}>-</PrimaryButton>
+            </View>
+
+            <View>
+            <PrimaryButton onPress={nextGuessHandler.bind(this, 'greater')}>+</PrimaryButton>
+            </View>
+
+            </View>
+            
             </View>
             {/* <View>LOG ROUNDS</View> */}
         </View>
