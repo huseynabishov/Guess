@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, StyleSheet, Alert } from "react-native";
+import { View, Text, StyleSheet, Alert, FlatList } from "react-native";
 import { useEffect } from "react";
 import {Ionicons} from "@expo/vector-icons"
 
@@ -8,6 +8,7 @@ import PrimaryButton from "../components/ui/PrimaryButton";
 import Title from "../components/ui/Title";
 import Card from "../components/ui/Card";
 import InstructionText from "../components/ui/InstructionText";
+import GuessLogItem from "../components/game/GuessLogItem";
 
 
 
@@ -32,6 +33,7 @@ function GameScreen({userNumber, onGameOver}) {
         userNumber
         );
     const[currentGuess, setCurrentGuess] = useState(initialGuess);
+    const[guessRounds, setGuessRounds] = useState([initialGuess]);
 
     useEffect(() => {
         if(currentGuess === userNumber) {
@@ -61,7 +63,11 @@ function GameScreen({userNumber, onGameOver}) {
         }
         const newRndumber = generateRandomBetween(minBoundary, maxBoundary, currentGuess);
         setCurrentGuess(newRndumber);
-      }
+        setGuessRounds(prevGuessRounds => [newRndumber, ...prevGuessRounds]);
+    }
+
+    // Calculate Rounds each time
+    const guessRoundsListLength = guessRounds.length;
     
     return (
         <View style={styles.screen}> 
@@ -83,11 +89,16 @@ function GameScreen({userNumber, onGameOver}) {
             <Ionicons name="md-add" size={24} color="white"/>
                 </PrimaryButton>
             </View>
-
             </View>
-            
             </Card>
-            {/* <View>LOG ROUNDS</View> */}
+            <View>
+                {/* {guessRounds.map(guessRound => <Text key={guessRound}>{guessRound}</Text> )} */}
+                <FlatList 
+                 data={guessRounds}
+                 renderItem={(itemData) => <GuessLogItem roundNumber={guessRoundsListLength - itemData.index} guess={itemData.item} />} 
+                 keyExtractor={(item) => item}
+                 />
+            </View>
         </View>
     );
 }
