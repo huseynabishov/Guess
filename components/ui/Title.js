@@ -12,7 +12,7 @@ export default Title;
 
 const styles = StyleSheet.create ({
     title: {
-        fontFamily: 'open-sans-family',
+        // fontFamily: 'open-sans-family',
         fontSize: 24,
         color: 'white',
         textAlign: 'center',
